@@ -94,7 +94,7 @@ void task_free(task_t *self)
 {
     free(self);
 }
-
+void init_buffer(vs_buf_t *buf,char *data,size_t sz);
 
 void submit_async_cb(uv_async_t *handle);
 
@@ -114,9 +114,11 @@ task_t * update_async_take_tasks(update_async_t *self);
 
 size_t copyBuffer (void *ptr, size_t size, size_t nmemb, void *ctx);
 
-int submit_item(vs_buf_t *body);
+int submit_item(vs_buf_t *body,char *url);
 
-int fake_submit_item();
+int fake_submit_item(vs_alarm_info_submit_t *body,vs_buf_t *buf);
+
+int fake_get_item_info(vs_alarm_info_submit_t *body,vs_buf_t *buf);
 
 
 #endif

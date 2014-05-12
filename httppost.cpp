@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <vector>
+#include <curl/curl.h>
 #include <iostream>
 
 #include "httppost.h"
@@ -122,86 +123,108 @@ task_t * main_async_take_tasks(main_async_t *self)
     return tasks;
 }
 
+void init_buffer(vs_buf_t *buf,char *data,size_t sz)
+{
+    buf->buf = data ;
+    bzero(buf->buf,sz);
+    buf->sz = sz;
+    buf->pos =0 ;
+}
 
 void submit_async_cb(uv_async_t *handle)
 {
     submit_async_t *async = (submit_async_t *) handle;
     task_t *head = submit_async_take_tasks(async), *tail;
     task_t *task = head;
+    char buffer[2048];
+    vs_buf_t send_buf;
 
+    init_buffer(&send_buf,buffer,2048);
     // simulate database latency
-    do {
+    do{
         //sleep(1);
         //putc('.', stdout);
         vs_alarm_info_submit_t *body=&(task->data) ;
         printf("%u:%d=%s\n",(unsigned int)pthread_self(),getpid(),body->id);
         //fflush(stdout);
+        vs_alarm_info_submit_t body2;
+        bzero(&body2,sizeof(vs_alarm_info_submit_t));
+        fake_submit_item(&body2,&send_buf);
+        submit_item(&send_buf,"http://116.226.70.205:6666/");
 
         if(! task->next) {
-            tail = task;
-        }
+             tail = task;
+         }
 
-    } while((task = task->next));
+     }while((task = task->next));
 
-    submit_async_callback(&main_async, head, tail);
-}
+     submit_async_callback(&main_async, head, tail);
+ }
 
-void update_async_cb(uv_async_t *handle)
-{
-    update_async_t *async = (update_async_t *) handle;
-    task_t *head = update_async_take_tasks(async), *tail;
-    task_t *task = head;
+ void update_async_cb(uv_async_t *handle)
+ {
+     update_async_t *async = (update_async_t *) handle;
+     task_t *head = update_async_take_tasks(async), *tail;
+     task_t *task = head;
 
-    // simulate database latency
-    do {
-        //        sleep(1);
-        //putc('.', stdout);
-        printf("%u:%d=%d\n",(unsigned int)pthread_self(),getpid(),task->sn);
-        //fflush(stdout);
+     // simulate database latency
+     do {
+         //        sleep(1);
+         //putc('.', stdout);
+         printf("%u:%d=%d\n",(unsigned int)pthread_self(),getpid(),task->sn);
+         //fflush(stdout);
 
-        if(! task->next) {
-            tail = task;
-        }
-    } while((task = task->next));
+         if(! task->next) {
+             tail = task;
+         }
+     } while((task = task->next));
 
-    update_async_callback(&main_async, head, tail);
-}
+     update_async_callback(&main_async, head, tail);
+ }
 
-void worker_entry_submit(void *arg)
-{
-    submit_loop = uv_loop_new();
+ void worker_entry_submit(void *arg)
+ {
+     submit_loop = uv_loop_new();
 
-    uv_async_init(submit_loop, (uv_async_t *) &submit_async, submit_async_cb);
-    submit_async.tasks = NULL ;
-    uv_mutex_init(&submit_async.lock) ;
+     uv_async_init(submit_loop, (uv_async_t *) &submit_async, submit_async_cb);
+     submit_async.tasks = NULL ;
+     uv_mutex_init(&submit_async.lock) ;
 
-    uv_run(submit_loop, UV_RUN_DEFAULT);
-}
+     uv_run(submit_loop, UV_RUN_DEFAULT);
+ }
 
-void worker_entry_update(void *arg)
-{
-    update_loop = uv_loop_new();
+ void worker_entry_update(void *arg)
+ {
+     update_loop = uv_loop_new();
 
-    uv_async_init(update_loop, (uv_async_t *) &update_async, update_async_cb);
+     uv_async_init(update_loop, (uv_async_t *) &update_async, update_async_cb);
 
-    uv_run(update_loop, UV_RUN_DEFAULT);
-}
+     uv_run(update_loop, UV_RUN_DEFAULT);
+ }
 
-void submit_timer_cb(uv_timer_t *timer)
-{
+ void submit_timer_cb(uv_timer_t *timer)
+ {
+     std::vector<vs_alarm_info_submit_t> vs_alarm_list;
+     vs_alarm_info_submit_t body;
+     vs_buf_t send_buf;
+     char buffer[2048];
+     init_buffer(&send_buf,buffer,2048);
+     fake_submit_item(&body,&send_buf);
 
-    std::vector<vs_alarm_info_submit_t> vs_alarm_list;
-    vs_alarm_info_submit_t body;
-    //DBOperator *db_handler = new DBOperator();
+     //DBOperator *db_handler = new DBOperator();
 
-    //db_handler->get_alarm_info_list(&vs_alarm_list);
-
-    memset(&body,0,sizeof(vs_alarm_list));
-
-    int list_len = vs_alarm_list.size();
-    if(list_len)
-    {
-        for(int i=0;i<list_len;i++)
+     //db_handler->get_alarm_info_list(&vs_alarm_list);
+     submit_async_add_task(&submit_async,task_make(&body));
+     init_buffer(&send_buf,buffer,2048);
+     submit_async_add_task(&submit_async,task_make(&body));
+     fake_get_item_info(&body,&send_buf);
+     submit_async_add_task(&submit_async,task_make(&body));
+     memset(&body,0,sizeof(vs_alarm_list));
+     
+     int list_len = vs_alarm_list.size();
+     if(list_len)
+     {
+         for(int i=0;i<list_len;i++)
         {
             body=vs_alarm_list.at(i) ;
             submit_async_add_task(&submit_async,task_make(&body));
@@ -215,8 +238,7 @@ void submit_timer_cb(uv_timer_t *timer)
 
 void alarm_command_make(vs_alarm_info_submit_t *body,char *xml_cmd_buf,size_t buf_sz)
 {
-    snprintf(xml_cmd_buf,buf_sz,"",);
-    
+    // snprintf(xml_cmd_buf,buf_sz,"",);
 }
 
 void update_timer_cb(uv_timer_t *timer)
@@ -257,7 +279,7 @@ int main()
     uv_timer_init(main_loop,&timer_submit);
     uv_timer_init(main_loop,&timer_update);
 
-    uv_timer_start(&timer_submit, submit_timer_cb, 0, 50);
+    uv_timer_start(&timer_submit, submit_timer_cb, 0, 500);
     uv_timer_start(&timer_update, update_timer_cb, 50000, 50000);
 
     uv_async_init(main_loop,(uv_async_t *)&main_async,main_callback);
@@ -270,15 +292,15 @@ int main()
 
 size_t copyBuffer (void *ptr, size_t size, size_t nmemb, void *ctx)
 {
-    vs_buf_t *cbc = ctx;
-    fprintf(stdout,"cpy-len0:%d[%d][%d][cbc->pos:%d:%d]\n",strlen(ptr),size,nmemb,cbc->pos,cbc->sz);
+    vs_buf_t *cbc = (vs_buf_t *)ctx;
+    fprintf(stdout,"cpy-len0:%d[%d][%d][cbc->pos:%d:%d]\n",strlen((char *)ptr),size,nmemb,cbc->pos,cbc->sz);
     if (cbc->pos + size * nmemb > cbc->sz)
     {
         return 0; /* overflow */
     }
     memcpy (&cbc->buf[cbc->pos], ptr, size * nmemb);
     cbc->pos += size * nmemb;
-    fprintf(stdout,"cpy-len1:%d[%d][%d][cbc->pos:%d:%d]\n",strlen(ptr),size,nmemb,cbc->pos,cbc->sz);
+    fprintf(stdout,"cpy-len1:%d[%d][%d][cbc->pos:%d:%d]\n",strlen((char *)ptr),size,nmemb,cbc->pos,cbc->sz);
     return size * nmemb;
 }
 
@@ -310,14 +332,31 @@ int fake_submit_item(vs_alarm_info_submit_t *body,vs_buf_t *buf)
         body->lv3_phone_no,body->alarm_msg,body->alarm_datetime,"02158383041",body->id,3,3);
 
     buf->pos = strlen(buf->buf);
-    buf->buf[pos]= 0 ;
-    printf("xxsend:%s\n",buf->buf);
+    buf->buf[buf->pos]= 0 ;
+    //printf("xxsend:%s\n",buf->buf);
+    return 0;
 
+}
+
+int fake_get_item_info(vs_alarm_info_submit_t *body,vs_buf_t *buf)
+{
+    time_t now;
+    time(&now);
+    
+    snprintf(buf->buf,buf->sz,"<RequestInfo><Id>flyingwings</Id><sign>58a4b20db19c1315c30f6cd259bf83b5</sign>"
+        "<Data><RequestSearchInfo><Item><ExtId>%s</ExtId><BatchId></BatchId></Item></RequestSearchInfo>"
+        "</Data></RequestInfo>",body->id);
+    //<RequestSearchInfo><Item><ExtId>%s</ExtId><BatchId></BatchId></Item></RequestSearchInfo>
+
+    buf->pos = strlen(buf->buf);
+    buf->buf[buf->pos]= 0 ;
+    printf("xxsend:%s\n",buf->buf);
+    return 0;
 }
 
 int submit_item(vs_buf_t *body,char *url)
 {
-    CURLMcode res;
+    CURLcode res;
     CURL *curl;
     char buf[2048];
     vs_buf_t cbc;
