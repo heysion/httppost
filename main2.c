@@ -23,26 +23,25 @@ typedef struct tag_vs_alarm_info_submit_t
 
 struct CBC
 {
-  char *buf;
-  size_t pos;
-  size_t size;
+    char *buf;
+    size_t pos;
+    size_t size;
 };
 
 size_t
 copyBuffer (void *ptr, size_t size, size_t nmemb, void *ctx)
 {
-  struct CBC *cbc = ctx;
-  //fprintf(stdout,"cpy-len0:%d[%d][%d][cbc->pos:%d:%d]\n",strlen(ptr),size,nmemb,cbc->pos,cbc->size);
-  if (cbc->pos + size * nmemb > cbc->size)
-  {
+    struct CBC *cbc = ctx;
+    fprintf(stdout,"cpy-len0:%d[%d][%d][cbc->pos:%d:%d]\n",strlen(ptr),size,nmemb,cbc->pos,cbc->size);
+    if (cbc->pos + size * nmemb > cbc->size)
+    {
 
-      return 0; /* overflow */
-  }
-    
-  memcpy (&cbc->buf[cbc->pos], ptr, size * nmemb);
-  cbc->pos += size * nmemb;
-  //fprintf(stdout,"cpy-len1:%d[%d][%d][cbc->pos:%d:%d]\n",strlen(ptr),size,nmemb,cbc->pos,cbc->size);
-  return size * nmemb;
+        return 0; /* overflow */
+    }
+    memcpy (&cbc->buf[cbc->pos], ptr, size * nmemb);
+    cbc->pos += size * nmemb;
+    fprintf(stdout,"cpy-len1:%d[%d][%d][cbc->pos:%d:%d]\n",strlen(ptr),size,nmemb,cbc->pos,cbc->size);
+    return size * nmemb;
 }
 
 size_t function_return( void *ptr, size_t size, size_t nmemb, void *stream)
@@ -51,50 +50,56 @@ size_t function_return( void *ptr, size_t size, size_t nmemb, void *stream)
     return 0;
 }
 
+int cmd_utf8_to_gb2312(char *in,char *outbuf,size_t outlen)
+{
+    int inlen = strlen(in);
+    char *out = outbuf;
+    iconv_t cd = iconv_open( "gb18030" , "utf-8");
+    if(cd == (iconv_t)-1){ return -1;}
+    bzero( outbuf, inlen * 4);
+
+    iconv(cd, &in, (size_t *)&inlen, &out,&outlen);
+    outlen = strlen(outbuf);
+    int flag = iconv_close(cd);
+    printf("kk[%d]:%s\n",outlen,outbuf);
+    return 0;
+}
+
+typedef struct vs_buf_s
+{
+    char buf[2048];
+    size_t len;
+    size_t pos;
+}buf2k_t;
+
+void init_buf2k(buf2k_t *buf)
+{
+    bzero(buf->buf,2048);
+    buf->len = 2048;
+    buf->pos =0 ;
+}
+
 int test()
 {
-    CURLM *m;
     CURLMcode res;
-    int running=1;
-
     CURL *curl;
-    //CURLcode res;
-
     char buf[2048];
-    struct CBC cbc;
-    int i;
     
+    struct CBC cbc;
+    buf2k_t send_buf;
+    init_buf2k(&send_buf);
     cbc.buf = buf;
     cbc.size = 2048;
     cbc.pos = 0;
-  
     curl_global_init(CURL_GLOBAL_ALL);
 
     curl = curl_easy_init();
-    m = curl_multi_init();
-
     vs_alarm_info_submit_t *body = (vs_alarm_info_submit_t *)malloc(sizeof(vs_alarm_info_submit_t));
     time_t now;
     time(&now);
     strftime(body->id, 20 , "%Y%m%d%H%M%S001", localtime(&now));
     strftime(body->alarm_datetime,20,"%Y-%m-%d %H:%M:%S",localtime(&now));
-
-    //strncpy(body->alarm_msg,"中文",80);
-    printf("len:%d %d\n",strlen(body->alarm_msg),strlen("abc"));
-
-    int inlen = 2048;
-    iconv_t cd = iconv_open( "gb18030" , "utf-8");
-    if(cd == (iconv_t)-1){ return -1;}
-    char *outbuf = (char *)malloc(inlen * 4 );
-    bzero( outbuf, inlen * 4);
-    char *in = "中文";
-    char *out = outbuf;
-    size_t outlen = inlen *4;
-    iconv(cd, &in, (size_t *)&inlen, &out,&outlen);
-    outlen = strlen(outbuf);
     strncpy(body->alarm_msg,"中文",80);
-    printf("in[%d]:%s\nkk[%d]:%s\n",inlen,body->alarm_msg,outlen,outbuf);
-    bzero( outbuf, inlen * 4);
 
     strncpy(body->lv1_phone_no,"013062699080",20);
     strncpy(body->lv2_phone_no,"15618666035",20);
@@ -116,45 +121,30 @@ int test()
         body->lv2_phone_no,body->alarm_msg,body->alarm_datetime,"02158383041",body->id,2,3,
         body->lv3_phone_no,body->alarm_msg,body->alarm_datetime,"02158383041",body->id,3,3);
 
-    in = xml_cmd_buf;
-    out = outbuf;
-    outlen = inlen *4;
-    iconv(cd, &in, (size_t *)&inlen, &out,&outlen);
-    outlen = strlen(outbuf);
-    //strncpy(body->alarm_msg,outbuf,80);
-    printf("send-buf:\n%s\n",outbuf);
-    iconv_close(cd);
-
-    if(curl) {
+    printf("xxsend:%s\n",xml_cmd_buf);
+    //if(cmd_utf8_to_gb2312(xml_cmd_buf,send_buf.buf,send_buf.len) == 0)
+    //{
+    
+        if(curl) {
         curl_easy_setopt(curl, CURLOPT_URL, "http://116.226.70.205:6666/");
         curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE,strlen(outbuf));
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, outbuf);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE,strlen(xml_cmd_buf));
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, xml_cmd_buf);
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
         curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, copyBuffer);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &cbc);
-      
-        res = curl_multi_add_handle(m, curl);
-    }
-    
-    //res = curl_easy_perform(curl);
-        /* Check for errors */
-    /*    if(res != CURLE_OK)
+
+        //res = curl_multi_add_handle(m, curl);
+        res = curl_easy_perform(curl);
+    /* Check for errors */
+        if(res != CURLE_OK)
             fprintf(stderr, "curl_easy_perform() failed: %s\n",
-                    curl_easy_strerror(res));
-    */
-        while (running) {
-            res = curl_multi_perform(m, &running);
-            if (running <= 0) {
-                fprintf(stderr, "nothing left running.\n");
-                break;
-            }
+                curl_easy_strerror(res));
         }
-    curl_multi_remove_handle(m, curl);
+        //}
 
     curl_easy_cleanup(curl);
-    curl_multi_cleanup(m);
 
     cbc.buf[cbc.pos]=0;
     printf("cbc-buf:%d %d\n%s\n",strlen(cbc.buf),cbc.pos,cbc.buf);

@@ -38,6 +38,30 @@ curl_context_t *create_curl_context(curl_socket_t sockfd) {
     return context;
 }
 
+struct CBC
+{
+  char *buf;
+  size_t pos;
+  size_t size;
+};
+
+size_t
+copyBuffer (void *ptr, size_t size, size_t nmemb, void *ctx)
+{
+  struct CBC *cbc = ctx;
+  //fprintf(stdout,"cpy-len0:%d[%d][%d][cbc->pos:%d:%d]\n",strlen(ptr),size,nmemb,cbc->pos,cbc->size);
+  if (cbc->pos + size * nmemb > cbc->size)
+  {
+
+      return 0; /* overflow */
+  }
+    
+  memcpy (&cbc->buf[cbc->pos], ptr, size * nmemb);
+  cbc->pos += size * nmemb;
+  //fprintf(stdout,"cpy-len1:%d[%d][%d][cbc->pos:%d:%d]\n",strlen(ptr),size,nmemb,cbc->pos,cbc->size);
+  return size * nmemb;
+}
+
 size_t function_return( void *ptr, size_t size, size_t nmemb, void *stream)
 {
     fprintf(stdout,"%s",ptr);
@@ -89,6 +113,13 @@ void add_download(const char *url, int num) {
     CURL *curl;
     //CURLcode res;
     curl = curl_easy_init();
+    struct CBC cbc;
+    char buf[2048]={0,};
+    int i;
+    
+    cbc.buf = buf;
+    cbc.size = 2048;
+    cbc.pos = 0;
 
     vs_alarm_info_submit_t *body = (vs_alarm_info_submit_t *)malloc(sizeof(vs_alarm_info_submit_t));
     time_t now;
@@ -139,7 +170,7 @@ void add_download(const char *url, int num) {
     iconv(cd, &in, (size_t *)&inlen, &out,&outlen);
     outlen = strlen(outbuf);
     //strncpy(body->alarm_msg,outbuf,80);
-    printf("send-buf:\n%s\n",outbuf);
+
     iconv_close(cd);
 
     if(curl) {
@@ -148,11 +179,13 @@ void add_download(const char *url, int num) {
         curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE,strlen(outbuf));
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, outbuf);
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, function_return);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION,copyBuffer);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &cbc);
         curl_multi_add_handle(curl_handle, curl);
     }
 
-    fprintf(stderr, "Added download %s \n", url);
+    cbc.buf[cbc.pos]=0;
+    fprintf(stderr, "Added download %d \n%s \n", cbc.pos,cbc.buf);
 }
 
 void curl_perform(uv_poll_t *req, int status, int events) {

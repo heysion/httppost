@@ -102,24 +102,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named VoiceSlave
+# Target rules for targets named VoiceSlave2
 
 # Build rule for target.
-VoiceSlave: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 VoiceSlave
-.PHONY : VoiceSlave
+VoiceSlave2: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 VoiceSlave2
+.PHONY : VoiceSlave2
 
 # fast build rule for target.
-VoiceSlave/fast:
-	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/build
-.PHONY : VoiceSlave/fast
+VoiceSlave2/fast:
+	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/build
+.PHONY : VoiceSlave2/fast
 
 main2.o: main2.c.o
 .PHONY : main2.o
 
 # target to build an object file
 main2.c.o:
-	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/main2.c.o
+	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/main2.c.o
 .PHONY : main2.c.o
 
 main2.i: main2.c.i
@@ -127,7 +127,7 @@ main2.i: main2.c.i
 
 # target to preprocess a source file
 main2.c.i:
-	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/main2.c.i
+	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/main2.c.i
 .PHONY : main2.c.i
 
 main2.s: main2.c.s
@@ -135,7 +135,7 @@ main2.s: main2.c.s
 
 # target to generate assembly for a file
 main2.c.s:
-	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/main2.c.s
+	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/main2.c.s
 .PHONY : main2.c.s
 
 # Help Target
@@ -144,7 +144,7 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... VoiceSlave"
+	@echo "... VoiceSlave2"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... main2.o"

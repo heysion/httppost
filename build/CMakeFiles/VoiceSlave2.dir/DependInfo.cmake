@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_C
-  "/disk1/workstation/dev/httppost/main2.c" "/disk1/workstation/dev/httppost/build/CMakeFiles/VoiceSlave.dir/main2.c.o"
+  "/disk1/workstation/dev/httppost/main2.c" "/disk1/workstation/dev/httppost/build/CMakeFiles/VoiceSlave2.dir/main2.c.o"
   )
 SET(CMAKE_C_COMPILER_ID "GNU")
 

@@ -56,38 +56,38 @@ CMAKE_SOURCE_DIR = /disk1/workstation/dev/httppost
 CMAKE_BINARY_DIR = /disk1/workstation/dev/httppost/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/VoiceSlave.dir
+# Target rules for target CMakeFiles/VoiceSlave2.dir
 
 # All Build rule for target.
-CMakeFiles/VoiceSlave.dir/all:
-	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/depend
-	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/build
+CMakeFiles/VoiceSlave2.dir/all:
+	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/depend
+	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/build
 	$(CMAKE_COMMAND) -E cmake_progress_report /disk1/workstation/dev/httppost/build/CMakeFiles  1
-	@echo "Built target VoiceSlave"
-.PHONY : CMakeFiles/VoiceSlave.dir/all
+	@echo "Built target VoiceSlave2"
+.PHONY : CMakeFiles/VoiceSlave2.dir/all
 
 # Include target in all.
-all: CMakeFiles/VoiceSlave.dir/all
+all: CMakeFiles/VoiceSlave2.dir/all
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/VoiceSlave.dir/rule: cmake_check_build_system
+CMakeFiles/VoiceSlave2.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /disk1/workstation/dev/httppost/build/CMakeFiles 1
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/VoiceSlave.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/VoiceSlave2.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /disk1/workstation/dev/httppost/build/CMakeFiles 0
-.PHONY : CMakeFiles/VoiceSlave.dir/rule
+.PHONY : CMakeFiles/VoiceSlave2.dir/rule
 
 # Convenience name for target.
-VoiceSlave: CMakeFiles/VoiceSlave.dir/rule
-.PHONY : VoiceSlave
+VoiceSlave2: CMakeFiles/VoiceSlave2.dir/rule
+.PHONY : VoiceSlave2
 
 # clean rule for target.
-CMakeFiles/VoiceSlave.dir/clean:
-	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/clean
-.PHONY : CMakeFiles/VoiceSlave.dir/clean
+CMakeFiles/VoiceSlave2.dir/clean:
+	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/clean
+.PHONY : CMakeFiles/VoiceSlave2.dir/clean
 
 # clean rule for target.
-clean: CMakeFiles/VoiceSlave.dir/clean
+clean: CMakeFiles/VoiceSlave2.dir/clean
 .PHONY : clean
 
 #=============================================================================
