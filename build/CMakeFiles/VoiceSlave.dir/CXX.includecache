@@ -6,20 +6,36 @@
 
 #IncludeRegexTransform: 
 
-/disk1/workstation/dev/httppost/main2.c
-stdio.h
+/disk1/workstation/dev/httppost/httppost.cpp
+uv.h
 -
 stdlib.h
 -
+stdio.h
+-
+arpa/inet.h
+-
+unistd.h
+-
+vector
+-
+iostream
+-
+httppost.h
+/disk1/workstation/dev/httppost/httppost.h
+
+/disk1/workstation/dev/httppost/httppost.h
 uv.h
 -
-curl/curl.h
+stdlib.h
+-
+stdio.h
+-
+arpa/inet.h
+-
+unistd.h
 -
 string.h
--
-time.h
--
-iconv.h
 -
 
 /opt/libuv/include/uv-errno.h

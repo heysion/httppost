@@ -1,1 +1,0 @@
-/usr/bin/cc  -g    CMakeFiles/VoiceSlave2.dir/main2.c.o  -o VoiceSlave2  -L/opt/libuv/lib -rdynamic -luv -lcurl -Wl,-rpath,/opt/libuv/lib 

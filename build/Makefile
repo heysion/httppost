@@ -102,41 +102,41 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named VoiceSlave2
+# Target rules for targets named VoiceSlave
 
 # Build rule for target.
-VoiceSlave2: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 VoiceSlave2
-.PHONY : VoiceSlave2
+VoiceSlave: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 VoiceSlave
+.PHONY : VoiceSlave
 
 # fast build rule for target.
-VoiceSlave2/fast:
-	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/build
-.PHONY : VoiceSlave2/fast
+VoiceSlave/fast:
+	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/build
+.PHONY : VoiceSlave/fast
 
-main2.o: main2.c.o
-.PHONY : main2.o
+httppost.o: httppost.cpp.o
+.PHONY : httppost.o
 
 # target to build an object file
-main2.c.o:
-	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/main2.c.o
-.PHONY : main2.c.o
+httppost.cpp.o:
+	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/httppost.cpp.o
+.PHONY : httppost.cpp.o
 
-main2.i: main2.c.i
-.PHONY : main2.i
+httppost.i: httppost.cpp.i
+.PHONY : httppost.i
 
 # target to preprocess a source file
-main2.c.i:
-	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/main2.c.i
-.PHONY : main2.c.i
+httppost.cpp.i:
+	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/httppost.cpp.i
+.PHONY : httppost.cpp.i
 
-main2.s: main2.c.s
-.PHONY : main2.s
+httppost.s: httppost.cpp.s
+.PHONY : httppost.s
 
 # target to generate assembly for a file
-main2.c.s:
-	$(MAKE) -f CMakeFiles/VoiceSlave2.dir/build.make CMakeFiles/VoiceSlave2.dir/main2.c.s
-.PHONY : main2.c.s
+httppost.cpp.s:
+	$(MAKE) -f CMakeFiles/VoiceSlave.dir/build.make CMakeFiles/VoiceSlave.dir/httppost.cpp.s
+.PHONY : httppost.cpp.s
 
 # Help Target
 help:
@@ -144,12 +144,12 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... VoiceSlave2"
+	@echo "... VoiceSlave"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... main2.o"
-	@echo "... main2.i"
-	@echo "... main2.s"
+	@echo "... httppost.o"
+	@echo "... httppost.i"
+	@echo "... httppost.s"
 .PHONY : help
 
 

@@ -152,6 +152,15 @@ int test()
 }
 int main()
 {
+    loop = uv_default_loop();
+    if(curl_global_init(CURL_GLOBAL_ALL))
+    {
+        fprintf(stderr, "Could not init cURL\n");
+        return 1;
+    }
+    uv_timer_init(loop,&timeout);
+    curl_handle = NULL ;
+    return 0;
     test();
 }
 
@@ -168,4 +177,8 @@ int main2(int argc , char **argv)
     return 0;
 }
 
+int test_get_result()
+{
+
+}
 

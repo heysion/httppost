@@ -1,0 +1,1 @@
+/usr/bin/c++   -g    CMakeFiles/VoiceSlave.dir/httppost.cpp.o  -o VoiceSlave  -L/opt/libuv/lib -rdynamic -luv -lcurl -Wl,-rpath,/opt/libuv/lib 
