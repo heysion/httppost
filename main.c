@@ -260,36 +260,3 @@ int main(int argc, char **argv) {
     curl_multi_cleanup(curl_handle);
     return 0;
 }
-
-int set_make()
-{
-    vs_alarm_info_submit_t *body = (vs_alarm_info_submit_t *)malloc(sizeof(vs_alarm_info_submit_t));
-    time_t now;
-    time(&now);
-    strftime(body->id, 20 , "%Y%m%d%H%M%S001", localtime(&now));
-    strftime(body->alarm_datetime,20,"%Y-%m-%d %H:%M:%S",localtime(&now));
-    strncpy(body->alarm_msg,"testing",80);
-    strncpy(body->lv1_phone_no,"013062699080",20);
-    strncpy(body->lv2_phone_no,"015618666035",20);
-    strncpy(body->lv3_phone_no,"015618666035",20);
-    char xml_cmd_buf[2048]={0,};
-    snprintf(xml_cmd_buf,2048,"<RequestInfo><Id>flyingwings</Id><sign>58a4b20db19c1315c30f6cd259bf83b5</sign>"
-        "<Data><RequestDailerInfo>"
-        "<Item><DestNo>%s</DestNo><DailerDsc>%s</DailerDsc><DailerReqTime>%s</DailerReqTime>"
-        "<ErrorDailerCount>1</ErrorDailerCount><DailerTrunkNo>%s</DailerTrunkNo><ExtId>%s</ExtId>"
-        "<DailerLevel>%d</DailerLevel><DailerRecordCount>%d</DailerRecordCount></Item>"
-        "<Item><DestNo>%s</DestNo><DailerDsc>%s</DailerDsc><DailerReqTime>%s</DailerReqTime>"
-        "<ErrorDailerCount>1</ErrorDailerCount><DailerTrunkNo>%s</DailerTrunkNo><ExtId>%s</ExtId>"
-        "<DailerLevel>%d</DailerLevel><DailerRecordCount>%d</DailerRecordCount></Item>"
-        "<Item><DestNo>%s</DestNo><DailerDsc>%s</DailerDsc><DailerReqTime>%s</DailerReqTime>"
-        "<ErrorDailerCount>1</ErrorDailerCount><DailerTrunkNo>%s</DailerTrunkNo><ExtId>%s</ExtId>"
-        "<DailerLevel>%d</DailerLevel><DailerRecordCount>%d</DailerRecordCount></Item>"
-        "</RequestDailerInfo></Data></RequestInfo>",
-        body->lv1_phone_no,body->alarm_msg,body->alarm_datetime,"02158383041",body->id,1,3,
-        body->lv2_phone_no,body->alarm_msg,body->alarm_datetime,"02158383041",body->id,2,3,
-        body->lv3_phone_no,body->alarm_msg,body->alarm_datetime,"02158383041",body->id,3,3);
-
-    
-    return 0;
-
-}
