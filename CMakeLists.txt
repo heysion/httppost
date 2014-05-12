@@ -12,5 +12,5 @@ link_directories(/opt/libuv/lib)
 
 include_directories(/opt/libuv/include)
 link_directories(/opt/libuv/lib)
-add_executable(VoiceSlave main.c)
+add_executable(VoiceSlave main2.c)
 target_link_libraries(VoiceSlave uv curl)

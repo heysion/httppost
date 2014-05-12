@@ -1,5 +1,5 @@
 FILE(REMOVE_RECURSE
-  "CMakeFiles/VoiceSlave.dir/main.c.o"
+  "CMakeFiles/VoiceSlave.dir/main2.c.o"
   "VoiceSlave.pdb"
   "VoiceSlave"
 )
