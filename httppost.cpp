@@ -149,7 +149,8 @@ void submit_async_cb(uv_async_t *handle)
         //fflush(stdout);
         vs_alarm_info_submit_t body2;
         bzero(&body2,sizeof(vs_alarm_info_submit_t));
-        fake_submit_item(&body2,&send_buf);
+        //fake_submit_item(&body2,&send_buf);
+        fake_get_item_info(&body2,&send_buf);
         submit_item(&send_buf,"http://116.226.70.205:6666/");
 
         if(! task->next) {
@@ -209,14 +210,14 @@ void submit_async_cb(uv_async_t *handle)
      vs_buf_t send_buf;
      char buffer[2048];
      init_buffer(&send_buf,buffer,2048);
-     fake_submit_item(&body,&send_buf);
+     //fake_submit_item(&body,&send_buf);
 
      //DBOperator *db_handler = new DBOperator();
 
      //db_handler->get_alarm_info_list(&vs_alarm_list);
-     submit_async_add_task(&submit_async,task_make(&body));
-     init_buffer(&send_buf,buffer,2048);
-     submit_async_add_task(&submit_async,task_make(&body));
+     //submit_async_add_task(&submit_async,task_make(&body));
+     //init_buffer(&send_buf,buffer,2048);
+     //submit_async_add_task(&submit_async,task_make(&body));
      fake_get_item_info(&body,&send_buf);
      submit_async_add_task(&submit_async,task_make(&body));
      memset(&body,0,sizeof(vs_alarm_list));
@@ -345,7 +346,7 @@ int fake_get_item_info(vs_alarm_info_submit_t *body,vs_buf_t *buf)
     
     snprintf(buf->buf,buf->sz,"<RequestInfo><Id>flyingwings</Id><sign>58a4b20db19c1315c30f6cd259bf83b5</sign>"
         "<Data><RequestSearchInfo><Item><ExtId>%s</ExtId><BatchId></BatchId></Item></RequestSearchInfo>"
-        "</Data></RequestInfo>",body->id);
+        "</Data></RequestInfo>","20140512210508001");
     //<RequestSearchInfo><Item><ExtId>%s</ExtId><BatchId></BatchId></Item></RequestSearchInfo>
 
     buf->pos = strlen(buf->buf);
