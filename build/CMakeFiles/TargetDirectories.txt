@@ -1,2 +1,0 @@
-/disk1/workstation/dev/httppost/build/CMakeFiles/VoiceSlave.dir
-/disk1/workstation/dev/httppost/build/CMakeFiles/test_uv_work.dir

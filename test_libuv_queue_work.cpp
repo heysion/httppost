@@ -28,9 +28,9 @@ int main()
     {
         
         r = uv_queue_work(loop,&worker_handle[i],worker_entry_invoke,worker_callback);
+        assert(r == 0);
     }
-        
-    assert(r == 0);
+
     return uv_run(loop,UV_RUN_DEFAULT);
     
 }
